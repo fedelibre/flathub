@@ -1,0 +1,108 @@
+name: lilypond
+buildsystem: autotools
+config-opts:
+  - "--disable-documentation"
+sources:
+  - type: archive
+    url: http://lilypond.org/download/sources/v2.19/lilypond-2.19.83.tar.gz
+    sha256: 96ba4f4b342d21057ad74d85d647aea7e47a5c24f895127c2b3553a252738fb3
+
+modules:
+  - name: python-2.7
+    sources:
+      - type: archive
+        url: https://www.python.org/ftp/python/2.7.17/Python-2.7.17.tar.xz
+        sha256: 4d43f033cdbd0aa7b7023c81b0e986fd11e653b5248dac9144d508f11812ba41
+    config-opts:
+      - "--enable-shared"
+      - "--with-ensurepip=yes"
+      - "--with-system-expat"
+      - "--with-system-ffi"
+      - "--enable-loadable-sqlite-extensions"
+      - "--with-dbmliborder=gdbm"
+      - "--enable-unicode=ucs4"
+    post-install:
+      - chmod 644 $FLATPAK_DEST/lib/libpython2.7.so.1.0
+    cleanup:
+      - "/bin/2to3*"
+      - "/bin/easy_install*"
+      - "/bin/idle*"
+      - "/bin/pydoc*"
+      - "/bin/python*-config"
+      - "/bin/pyvenv*"
+      - "/include"
+      - "/lib/pkgconfig"
+      - "/lib/python*/config"
+      - "/share"
+      - "/lib/python*/test"
+      - "/lib/python*/*/test"
+      - "/lib/python*/*/tests"
+      - "/lib/python*/lib-tk/test"
+      - "/lib/python*/lib-dynload/_*_test.*.so"
+      - "/lib/python*/lib-dynload/_test*.*.so"
+      - "/lib/python*/idlelib"
+      - "/lib/python*/tkinter*"
+      - "/lib/python*/turtle*"
+      - "/lib/python*/lib2to3*"
+      - "/lib/python2.7/config/libpython2.7.a"
+
+  - name: guile
+    buildsystem: autotools
+    build-options:
+      cflags: "-Wno-unused-but-set-variable -Wno-misleading-indentation
+              -Wno-stringop-truncation -Wno-deprecated-declarations"
+    sources:
+      - type: archive
+        url: https://ftp.gnu.org/gnu/guile/guile-1.8.8.tar.gz
+        sha256: c3471fed2e72e5b04ad133bbaaf16369e8360283679bcf19800bc1b381024050
+
+  - name: pango
+    sources:
+      - type: archive
+        url: https://ftp.gnome.org/pub/GNOME/sources/pango/1.42/pango-1.42.4.tar.xz
+        sha256: 1d2b74cd63e8bd41961f2f8d952355aa0f9be6002b52c8aa7699d9f5da597c9d
+    cleanup:
+      - /share/doc/fontforge
+
+  - name: libuinameslist
+    sources:
+      - type: archive
+        url: https://github.com/fontforge/libuninameslist/releases/download/20180701/libuninameslist-dist-20180701.tar.gz
+        sha256: 8aed97d0bc872d893d8bf642a14e49958b0613136e1bfe2a415c69599c803c90
+
+  - name: fontforge
+    buildsystem: autotools
+    config-opts:
+      - "--enable-double"
+    sources:
+      - type: archive
+        url: https://github.com/fontforge/fontforge/releases/download/20190801/fontforge-20190801.tar.gz
+        sha256: d92075ca783c97dc68433b1ed629b9054a4b4c74ac64c54ced7f691540f70852
+
+  - name: t1utils
+    sources:
+      - type: archive
+        url: https://github.com/kohler/t1utils/archive/v1.41.tar.gz
+        sha256: 0129fbfabb212143f52ff1e5de8ccbef5e5295d46772bad3ed149115bab5a094
+
+  - name: texgyre
+    sources:
+      - type: archive
+        url: http://www.gust.org.pl/projects/e-foundry/tex-gyre/whole/tg2_501otf.zip
+        sha256: d7f8be5317bec4e644cf16c5abf876abeeb83c43dbec0ccb4eee4516b73b1bbe
+    buildsystem: simple
+    build-commands:
+      - mkdir /app/share/fonts
+      - install * /app/share/fonts
+
+  ## TODO: MetaFont and MetaPost. This is not working:
+  - name: metapost
+    sources:
+      - type: svn
+        url: svn://tug.org/texlive/branches/branch2019/Build/source
+    buildsystem: simple
+    build-commands:
+      - ./configure --enable-build-in-source-tree --disable-all-pkgs  --enable-mplibdir --prefix /app
+      - make
+      - make check
+      - make install
