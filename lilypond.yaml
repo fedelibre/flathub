@@ -96,13 +96,10 @@ modules:
       - install * /app/share/fonts
 
   ## TODO: MetaFont and MetaPost. This is not working:
-  - name: metapost
+  - name: web2c
     sources:
       - type: svn
         url: svn://tug.org/texlive/branches/branch2019/Build/source
     buildsystem: simple
     build-commands:
-      - ./configure --enable-build-in-source-tree --disable-all-pkgs  --enable-mplibdir --prefix /app
-      - make
-      - make check
-      - make install
+      - ./Build --enable-web2c --disable-all-pkgs # The directory is however still wrong.
