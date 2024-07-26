@@ -1,0 +1,72 @@
+---
+app-id: org.gnome.Pomodoro
+runtime: org.gnome.Platform
+runtime-version: '46'
+sdk: org.gnome.Sdk
+command: gnome-pomodoro
+copy-icon: true
+rename-icon: gnome-pomodoro
+finish-args:
+  - "--share=ipc"
+  - "--socket=x11"
+  - "--socket=wayland"
+  - "--talk-name=org.gnome.Shell"
+  - "--device=dri"
+  - "--socket=pulseaudio"
+  - "--socket=session-bus"
+  - "--filesystem=host"
+  - "--filesystem=xdg-run/dconf"
+  - "--filesystem=~/.config/dconf:rw"
+  - "--talk-name=ca.desrt.dconf"
+  - "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
+build-options:
+  cflags: "-O2 -g"
+  cxxflags: "-O2 -g"
+  env: {}
+cleanup:
+  - "/include"
+  - "/lib/girepository-1.0"
+  - "/lib/pkgconfig"
+  - "/man"
+  - "/share/aclocal"
+  - "/share/doc"
+  - "/share/gir-1.0"
+  - "/share/gtk-doc"
+  - "/share/pkgconfig"
+  - "/share/man"
+  - "/share/vala"
+  - "*.la"
+  - "*.a"
+
+modules:
+  - shared-modules/libcanberra/libcanberra.json
+  - name: libpeas
+    buildsystem: meson
+    config-opts:
+      - "-Dlua51=false"
+      - "-Dpython3=false"
+    cleanup:
+      - "/bin/*"
+      - "/lib/peas-demo"
+      - "/include"
+      - "/lib/girepository-1.0"
+      - "/lib/*.la"
+      - "/lib/pkgconfig"
+      - "/share/gir-1.0"
+      - "/share/gtk-doc"
+    sources:
+      - type: archive
+        url: https://download.gnome.org/sources/libpeas/1.36/libpeas-1.36.0.tar.xz
+        sha256: 297cb9c2cccd8e8617623d1a3e8415b4530b8e5a893e3527bbfd1edd13237b4c
+  - name: gom
+    buildsystem: meson
+    sources:
+      - type: archive
+        url: https://download.gnome.org/sources/gom/0.5/gom-0.5.2.tar.xz
+        sha256: 4cde83adf6f826836ed575d420f987ad1f559606b218224b69bf559f2ed7e205
+  - name: gnome-pomodoro
+    buildsystem: meson
+    sources:
+      - type: archive
+        url: https://github.com/gnome-pomodoro/gnome-pomodoro/archive/refs/tags/0.25.2.tar.gz
+        sha256: 5936def26fb648f27b16488a3163b29abe908596910d7d9e224d7d3d029e29c3
